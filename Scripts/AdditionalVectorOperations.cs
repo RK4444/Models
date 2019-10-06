@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using Unity.Mathematics;
 using System.Runtime.Serialization.Formatters.Binary;
+using static AdditionalContent.Data.PlayerInfo;
 
 namespace AdditionalContent
 {
@@ -23,7 +24,7 @@ namespace AdditionalContent
 			}
 
 			public static quaternion ToNewQuaternion(this Quaternion oldQuaternion) {
-				return new quaternion(newQuaternion.x, newQuaternion.y, newQuaternion.z, newQuaternion.w);
+				return new quaternion(oldQuaternion.x, oldQuaternion.y, oldQuaternion.z, oldQuaternion.w);
 			}
 
 			public static Vector3 ToVector3(this float3 origin) {
@@ -91,13 +92,18 @@ namespace AdditionalContent
 			}
 		}
 
-		public static class SaveLoadUpgraded
+		public class SaveLoadUpgraded<T>
 		{
 			T holder;
 
-			public static void Save<T> (T toSerialize) {
-				//string ser1 = JsonUtility.ToJson (Player);
-				holder = toSerialize;
+            public SaveLoadUpgraded(T holder)
+            {
+                this.holder = holder;
+            }
+
+            public void Save (T toSerialize, string SaveFileName) {
+                //string ser1 = JsonUtility.ToJson (Player);
+                holder = toSerialize;
 				BinaryFormatter bf = new BinaryFormatter();
 				FileStream file = File.Create (Application.persistentDataPath + "/" + SaveFileName + ".dat");
 
@@ -107,7 +113,7 @@ namespace AdditionalContent
 
 			}
 
-			public static T Load (string SaveFileName) {
+			public T Load (string SaveFileName) {
 				//path = Application.persistentDataPath + "/Storage.json";
 				//jsonstring1 = File.ReadAllText (path);
 				//Player = JsonUtility.FromJson<SaveField> (jsonstring1);
@@ -123,7 +129,7 @@ namespace AdditionalContent
 					
 				}
 
-				return null;
+				return default;
 			}
 		}
 		#endregion
